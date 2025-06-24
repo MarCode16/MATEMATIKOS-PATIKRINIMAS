@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matematikos Patikrinimas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-top: 0;
+            font-weight: normal;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        
+        .instructions {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        
+        .info-box {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        
+        .start-button {
+            display: block;
+            width: 200px;
+            margin: 0 auto;
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+        
+        .start-button:hover {
+            background-color: #2980b9;
+        }
+        
+        .test-container {
+            display: none;
+        }
+        
+        .question {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .nav-button {
+            padding: 8px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .nav-button:hover {
+            background-color: #2980b9;
+        }
+        
+        .nav-button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .progress-bar {
+            height: 5px;
+            background-color: #ecf0f1;
+            margin-bottom: 20px;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: #2ecc71;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .submit-container {
+            text-align: center;
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .results {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="intro-screen">
+        <h1>PIRMASIS TARPINIS MATEMATIKOS PATIKRINIMAS</h1>
+        <h2>BENDRASIS KURSAS. 2023 m.</h2>
+        
+        <div class="instructions">
+            <p>Šiandienos patikrinime rasite skirtingų užduočių. Atidžiai perskaitykite kiekvieną užduotį ir pasistenkite kuo geriau jas atlikti.</p>
+            <p>Jei kiltų techninių nesklandumų arba sistema „pakibtu", prašytume šiek tiek palaukti ir tęsti darbą, kai tik sistema tai leis.</p>
+        </div>
+        
+        <div class="info-box">
+            <div>Patikrinimą sudaro <span id="total-questions">15</span> užduočių</div>
+            <div>Patikrinimo trukmė <span id="test-duration">45</span> min.</div>
+        </div>
+        
+        <button class="start-button" id="start-test">Pradėti testą</button>
+    </div>
+    
+    <div class="test-container" id="test-container">
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        
+        <div class="question" id="question-container">
+            <h3 id="question-number">1 klausimas</h3>
+            <p id="question-text">Klausimo tekstas...</p>
+            
+            <div id="answers">
+                <!-- Atsakymų variantai bus sugeneruoti JavaScript -->
+            </div>
+        </div>
+        
+        <div class="navigation">
+            <button class="nav-button" id="prev-btn" disabled>Atgal</button>
+            <button class="nav-button" id="next-btn">Kitas</button>
+        </div>
+        
+        <div class="submit-container" id="submit-container">
+            <button class="start-button" id="submit-test">Pateikti testą</button>
+        </div>
+    </div>
+    
+    <div class="results" id="results">
+        <h3>Jūsų rezultatas: <span id="score">0</span> iš <span id="max-score">15</span></h3>
+        <p id="result-message"></p>
+    </div>
+    
+    <script>
+        // Testo klausimai
+        const questions = [
+            {
+                question: "Kiek yra 2 + 2?",
+                answers: ["3", "4", "5", "6"],
+                correct: 1
+            },
+            {
+                question: "Kokia yra lygties x - 5 = 3 sprendinys?",
+                answers: ["2", "8", "-2", "15"],
+                correct: 1
+            },
+            {
+                question: "Kiek procentų yra 1/4?",
+                answers: ["10%", "25%", "40%", "50%"],
+                correct: 1
+            },
+            {
+                question: "Kokia yra 5 kvadratu?",
+                answers: ["10", "15", "20", "25"],
+                correct: 3
+            },
+            {
+                question: "Kiek kraštinių turi trikampis?",
+                answers: ["2", "3", "4", "5"],
+                correct: 1
+            },
+            {
+                question: "Kokia yra 10 dalijama iš 0.5?",
+                answers: ["5", "10", "20", "50"],
+                correct: 2
+            },
+            {
+                question: "Kiek laipsnių turi statusis kampas?",
+                answers: ["45°", "90°", "120°", "180°"],
+                correct: 1
+            },
+            {
+                question: "Kokia yra apskritimo, kurio spindulys 2, plotas? (π=3.14)",
+                answers: ["6.28", "12.56", "18.84", "25.12"],
+                correct: 1
+            },
+            {
+                question: "Kiek yra 3³?",
+                answers: ["6", "9", "18", "27"],
+                correct: 3
+            },
+            {
+                question: "Kokia yra lygiagretainio priešingų kampų savybė?",
+                answers: ["Lygūs", "Skirtingi", "Vienas statusis", "Vienas bukas"],
+                correct: 0
+            },
+            {
+                question: "Kokia yra 0.5 trupmenine išraiška?",
+                answers: ["1/8", "1/4", "1/3", "1/2"],
+                correct: 3
+            },
+            {
+                question: "Kiek yra 7 × 8?",
+                answers: ["48", "54", "56", "64"],
+                correct: 2
+            },
+            {
+                question: "Kokia yra didžiausia bendra 12 ir 18 dalis?",
+                answers: ["2", "3", "6", "9"],
+                correct: 2
+            },
+            {
+                question: "Kiek metų yra šimtame?",
+                answers: ["10", "50", "100", "1000"],
+                correct: 2
+            },
+            {
+                question: "Kokia yra 1/2 + 1/4?",
+                answers: ["1/6", "1/3", "2/6", "3/4"],
+                correct: 3
+            }
+        ];
+        
+        // DOM elementai
+        const introScreen = document.querySelector('.intro-screen');
+        const testContainer = document.getElementById('test-container');
+        const startButton = document.getElementById('start-test');
+        const questionNumber = document.getElementById('question-number');
+        const questionText = document.getElementById('question-text');
+        const answersContainer = document.getElementById('answers');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const submitContainer = document.getElementById('submit-container');
+        const submitButton = document.getElementById('submit-test');
+        const resultsContainer = document.getElementById('results');
+        const scoreElement = document.getElementById('score');
+        const maxScoreElement = document.getElementById('max-score');
+        const resultMessage = document.getElementById('result-message');
+        const progressBar = document.getElementById('progress');
+        
+        // Testo būsena
+        let currentQuestion = 0;
+        let userAnswers = Array(questions.length).fill(null);
+        let testSubmitted = false;
+        
+        // Pradėti testą
+        startButton.addEventListener('click', () => {
+            introScreen.style.display = 'none';
+            testContainer.style.display = 'block';
+            showQuestion();
+            startTimer(45 * 60); // 45 minutės
+        });
+        
+        // Rodyti klausimą
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            questionNumber.textContent = `${currentQuestion + 1} klausimas`;
+            questionText.textContent = question.question;
+            
+            answersContainer.innerHTML = '';
+            question.answers.forEach((answer, index) => {
+                const answerElement = document.createElement('div');
+                answerElement.style.margin = '10px 0';
+                
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'answer';
+                radio.id = `answer-${index}`;
+                radio.value = index;
+                radio.checked = userAnswers[currentQuestion] === index;
+                
+                radio.addEventListener('change', () => {
+                    userAnswers[currentQuestion] = parseInt(radio.value);
+                });
+                
+                const label = document.createElement('label');
+                label.htmlFor = `answer-${index}`;
+                label.textContent = answer;
+                label.style.marginLeft = '5px';
+                
+                answerElement.appendChild(radio);
+                answerElement.appendChild(label);
+                answersContainer.appendChild(answerElement);
+            });
+            
+            // Atnaujinti navigacijos mygtukus
+            prevButton.disabled = currentQuestion === 0;
+            
+            if (currentQuestion === questions.length - 1) {
+                nextButton.style.display = 'none';
+                submitContainer.style.display = 'block';
+            } else {
+                nextButton.style.display = 'inline-block';
+                submitContainer.style.display = 'none';
+            }
+            
+            // Atnaujinti progreso juostą
+            updateProgressBar();
+        }
+        
+        // Atnaujinti progreso juostą
+        function updateProgressBar() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+        
+        // Ankstesnis klausimas
+        prevButton.addEventListener('click', () => {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+        });
+        
+        // Kitas klausimas
+        nextButton.addEventListener('click', () => {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            }
+        });
+        
+        // Pateikti testą
+        submitButton.addEventListener('click', () => {
+            if (confirm('Ar tikrai norite pateikti testą? Po patvirtinimo jo keisti nebegalėsite.')) {
+                submitTest();
+            }
+        });
+        
+        // Testo pateikimas
+        function submitTest() {
+            testSubmitted = true;
+            testContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            // Skaičiuoti rezultatą
+            let score = 0;
+            userAnswers.forEach((answer, index) => {
+                if (answer !== null && answer === questions[index].correct) {
+                    score++;
+                }
+            });
+            
+            scoreElement.textContent = score;
+            maxScoreElement.textContent = questions.length;
+            
+            // Rezultato pranešimas
+            const percentage = (score / questions.length) * 100;
+            if (percentage >= 90) {
+                resultMessage.textContent = "Puikiai atlikta! Jūsų rezultatas labai aukštas.";
+            } else if (percentage >= 70) {
+                resultMessage.textContent = "Gerai atlikta! Jūs turite gerus matematikos pagrindus.";
+            } else if (percentage >= 50) {
+                resultMessage.textContent = "Vidutiniškai. Galbūt reikėtų dar šiek tiek pasitempti.";
+            } else {
+                resultMessage.textContent = "Reikėtų daugiau pasistengti. Nepraraskite vilties ir toliau treniruokitės!";
+            }
+        }
+        
+        // Laikmatis
+        function startTimer(durationInSeconds) {
+            let timer = durationInSeconds;
+            const timerElement = document.createElement('div');
+            timerElement.style.position = 'fixed';
+            timerElement.style.top = '10px';
+            timerElement.style.right = '10px';
+            timerElement.style.backgroundColor = '#f8f9fa';
+            timerElement.style.padding = '5px 10px';
+            timerElement.style.borderRadius = '5px';
+            timerElement.style.fontWeight = 'bold';
+            document.body.appendChild(timerElement);
+            
+            const interval = setInterval(() => {
+                const minutes = Math.floor(timer / 60);
+                const seconds = timer % 60;
+                
+                timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                
+                if (--timer < 0) {
+                    clearInterval(interval);
+                    timerElement.textContent = "Laikas baigėsi!";
+                    if (!testSubmitted) {
+                        submitTest();
+                    }
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
